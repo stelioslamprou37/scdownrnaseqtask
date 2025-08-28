@@ -1,0 +1,29 @@
+task: >
+  You have been provided with a processed single-cell dataset (Seurat or h5ad format) and the scDown downstream analysis pipeline. Your task is to execute the workflow in `/workflow` on data located in `/data` and answer the following questions using the outputs.
+
+questions:
+  - id: q1
+    stage: proportion_analysis
+    text: "Which cell type had the largest absolute increase in proportion between conditions?"
+    answer_type: string_exact
+
+  - id: q2
+    stage: communication_analysis
+    text: "Which signaling pathway exhibited the highest total information flow in the CellChat output?"
+    answer_type: string_exact
+
+  - id: q3
+    stage: pseudotime
+    text: "What is the pseudotime value of the earliest cell along the Monocle3 trajectory?"
+    answer_type: numeric_percent
+    tolerance: 1.0
+
+  - id: q4
+    stage: rna_velocity
+    text: "Which cell cluster showed the highest average RNA velocity magnitude?"
+    answer_type: string_exact
+
+  - id: q5
+    stage: comprehensive_summary
+    text: "How many genes were identified as drivers of the trajectory (monocle3)?"
+    answer_type: integer_exact

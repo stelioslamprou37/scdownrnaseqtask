@@ -1,0 +1,22 @@
+
+Data Access Instructions
+-------------------------
+
+The data used in this project was accessed according to the recommendations described in the scDown pipeline publication:
+
+Sun L. et al. (2025). "scDown: A Pipeline for Single-Cell RNA‑Seq Downstream Analysis". International Journal of Molecular Sciences. DOI: 10.3390/ijms26115297
+
+Following the authors’ instructions, compatible single-cell RNA-seq datasets were retrieved in Seurat (.rds) or Scanpy (.h5ad) format.
+
+To access similar datasets manually, follow these general steps:
+
+1. Identify compatible single-cell datasets via public repositories such as:
+   - Gene Expression Omnibus (GEO): https://www.ncbi.nlm.nih.gov/geo/
+   - Single Cell Portal: https://singlecell.broadinstitute.org/single_cell
+   - EMBL-EBI Single Cell Expression Atlas: https://www.ebi.ac.uk/gxa/sc/
+
+2. Download `.rds` or `.h5ad` files as specified in the scDown documentation.
+
+3. Place your downloaded dataset into the `/data` directory of the project folder.
+
+NOTE: The current dataset used was pre-processed and uploaded separately due to file size limitations on GitHub and Taiga. Please refer to the Taiga project page or contact the task submitter for a direct download link.

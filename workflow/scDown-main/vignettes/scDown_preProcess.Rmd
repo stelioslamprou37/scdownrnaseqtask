@@ -1,0 +1,129 @@
+---
+title: "scDown: A Pipeline for scRNA-seq Downstream Analysis"
+author: |
+    | 
+date: "`r format(Sys.Date(), '%m/%Y')`"
+output: 
+  rmarkdown::html_document:
+    #theme: flatly
+    highlight: pygments
+    toc: true
+    toc_depth: 3
+    number_sections: true  ## if you want number sections at each table header
+    df_print: paged
+    #theme: united  # many options for theme, this one is my favorite.
+#bibliography: library.bib
+fig_width: 8 
+fig_height: 5 
+vignette: >
+  %\VignetteIndexEntry{scDown_scProportionTest}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  fig.width=8, 
+  fig.height=5
+)
+
+```
+
+# Introduction 
+`scDown` is a modular and user-friendly pipeline for downstream analysis of single-cell RNA sequencing (scRNA-seq) data. It streamlines complex analysis into simple, reproducible workflows. This vignette provides a step-by-step guide for setting up your environment and running key `scDown` functions.
+
+Key Modules:
+
+  1. scDown::doTransferLabel: Transfers cell type labeling from a reference Seurat object to a query Seurat object.
+  
+  2. scDown::run_scproportion: Compare cell-type proportions across conditions.
+  
+  3. scDown::run_cellchatV2: Infer and visualize cell-cell communication networks.
+  
+  4. scDown::run_monocle3: Perform pseudotime trajectory inference.
+  
+  5. scDown::run_scvelo: Incorporate spliced and unspliced counts and conduct RNA velocity analysis.
+
+  5. scDown::run_scvelo_full: Estimate RNA velocity with enhanced visualizations and PAGA trajectory inference.
+
+
+# Load Required Libraries and Set Variables
+
+```{r,message=FALSE,eval=FALSE}
+library(scDown)
+```
+
+## Annotated Seurat Object
+Before running the pipeline, configure the following global variables, set the output directory to save the output results, and load Seurat object of scRNA-seq data. The metadata column (annotation_column) is defined to specify the cell type or other annotation labels, ensuring the analysis runs with the correct input data.
+
+```{r, message=FALSE,eval=FALSE}
+# Define output directory for results
+output_dir <- "/path/to/save/results"
+
+# Small test data embedded in scDown library
+seurat_obj_path <- system.file("extdata", "10X43_1_spliced_unspliced.rds", package="scDown")
+# for your own data, specify the path and file name using: 
+# seurat_obj_path <- "/input_dir/filename.rds"
+# note: the path /input_dir defined in singularity exec -B /path/to/your/input/data/directory:/input_dir /path/to/singularity/image/scdown_amd64.sif R 
+
+# Load Seurat object
+seurat_obj <- readRDS(seurat_obj_path)
+
+# Metadata cell type column
+annotation_column <- "clusters"
+
+# Defining species is needed for run_cellchatV2 function
+# default CellChatV2 databases include "mouse" and "human" databases
+species <- "mouse"
+
+```
+
+If you have `.h5ad` file, convert it to Seurat object using: 
+```{r, message=FALSE,eval=FALSE}
+h5ad_file <- "path/to/h5ad.file"
+seurat_obj <- h5adToSeurat(h5ad_file, annotation_column=NULL)
+```
+If your Seurat object has cell type annotation you can skip next step (2.2) and go to part 3 `Run scDown Functions`
+
+## Unannotated Seurat Object
+To perform cell type-specific analysis, the Seurat object's metadata should include annotated cell types. If your scRNA-seq dataset is unannotated, you can use `doTransferLabel` function to transfer cell types labels from a reference Seurat object. This function utilizes a k-nearest neighbor (k-NN) classifier within the reference UMAP space to assign labels to query cells. You need a reference Seurat object containing annotated cell types (i.e., `Idents(reference)` should correspond to cell types); and a query Seurat object for which cell tyoe annotations are to be inferred. The optional variables are a variable in the reference metadata to harmonize on (e.g., batch, condition) and the option to transfer UMAP coordinates from reference to query.
+
+```{r, message=FALSE,eval=FALSE}
+# Load your reference unannotated Seurat objects
+reference_seurat_obj <- readRDS("path/to/reference-Seurat-object.rds")
+unannotated_seurat_obj <- readRDS("path/to/unannotated-Seurat-object.rds")
+
+# Transfer cell type labels to your unannotated Seurat object
+seurat_obj <- doTransferLabel(
+  reference_seurat_obj, 
+  unannotated_seurat_obj, 
+  varToHarmonize = NULL, # optionally provide a variable to harmonize
+  transferCoordinates = FALSE # set to TRUE to transfer UMAP coordinates
+)
+```
+The return `seurat_obj` will contain the predicted cell type labels from each cell and the confidence score of the label assignment and the updated UMAP coordinates (if `transferCoordinates = TRUE`). This annotated Seurat object can now be used as input for scDown functions.
+
+# Run scDown Functions
+Once the Seurat object and global Parmesans are set up, you can run the following key functions in scDown:
+
+➡️ <a href="scProportionTest.html" target="_blank">scDown::run_scproportion</a>
+Compare relative cell-type proportions across two biological conditions. 
+
+➡️ <a href="scDown_CellChatV2.html" target="_blank">scDown::run_cellchatV2</a>
+Explore cell–cell communication across cell types, tissues, or disease states.
+
+➡️ <a href="scDown_monocle.html" target="_blank">scDown::run_monocle3</a>
+Perform pseudotime trajectory analysis and identify key regulators of cell state transitions.
+
+➡️ <a href="run_scvelo.html" target="_blank">scDown::run_scvelo</a>
+Incorporate spliced and unspliced counts and conduct RNA velocity analysis.
+
+➡️ <a href="run_scvelo_full.html" target="_blank">scDown::run_scvelo_full</a>
+Estimate RNA velocity with enhanced visualizations and PAGA trajectory inference.
+
+

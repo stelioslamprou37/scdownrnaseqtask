@@ -1,0 +1,19 @@
+paper:
+  title: "scDown: A Pipeline for Single‑Cell RNA‑Seq Downstream Analysis"
+  authors: Sun L., Ma Q., Cai C., Labaf M., Jain A., Dias C., Rockowitz S., Sliz P.
+  journal: "International Journal of Molecular Sciences"
+  year: 2025
+  doi: "10.3390/ijms26115297"
+
+dataset:
+  description: "Processed single-cell transcriptomic dataset compatible with Seurat or Scanpy"
+  access_instructions: "Data accessed and processed following scDown publication guidelines" 
+
+pipeline:
+  repo: "https://github.com/BCH-RC/scDown"
+  language: "R"
+  components:
+    - scProportionTest
+    - CellChat
+    - Monocle3
+    - RNA velocity (via velociraptor / scVelo)
